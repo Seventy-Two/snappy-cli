@@ -50,5 +50,5 @@ func openAndCompress(filename string) error {
 
 	cw.Close()
 	outFile.Close()
-	return nil
+	return os.Remove(filename)
 }
