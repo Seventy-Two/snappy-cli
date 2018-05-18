@@ -40,12 +40,15 @@ func openAndCompress(filename string) error {
 	if err != nil {
 		return err
 	}
+
 	cw := snappy.NewBufferedWriter(outFile)
 
 	_, err = io.Copy(cw, fr)
 	if err != nil {
 		return err
 	}
-	err = os.Remove(filename)
-	return err
+
+	cw.Close()
+	outFile.Close()
+	return nil
 }
