@@ -2,6 +2,7 @@ package main
 
 import (
 	"io"
+	"io/ioutil"
 	"log"
 	"os"
 
@@ -9,18 +10,42 @@ import (
 )
 
 func main() {
-	r := os.Stdin
-	if len(os.Args) >= 2 {
-		srcPath := os.Args[1]
-		fr, err := os.Open(srcPath)
+	srcPath := os.Args[1]
+	files, err := ioutil.ReadDir(srcPath)
+	if err != nil {
+		err = openAndCompress(srcPath)
 		if err != nil {
 			log.Fatal(err)
 		}
-		defer fr.Close()
-		r = fr
+	}
+	for _, file := range files {
+		if !file.IsDir() {
+			err := openAndCompress(srcPath + string(os.PathSeparator) + file.Name())
+			if err != nil {
+				log.Fatal(err)
+			}
+		}
 	}
 
-	cw := snappy.NewBufferedWriter(os.Stdout)
-	_, _ = io.Copy(cw, r)
-	_ = cw.Close()
+}
+
+func openAndCompress(filename string) error {
+	fr, err := os.Open(filename)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer fr.Close()
+
+	outFile, err := os.Create(filename + ".snappy")
+	if err != nil {
+		return err
+	}
+	cw := snappy.NewBufferedWriter(outFile)
+
+	_, err = io.Copy(cw, fr)
+	if err != nil {
+		return err
+	}
+	err = os.Remove(filename)
+	return err
 }
