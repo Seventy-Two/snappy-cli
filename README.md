@@ -6,27 +6,34 @@ for uncompressing i.e `snappy-compress` and `snappy-uncompress`.
 
 * Note:
 Both utils:
-- Read either from stdin or from a file on disk passed in as a path.
-- Output their result to stdout.
-
+- Accept directories (will operate on individual files within) and files
+- Will remove original files
 
 ### Installation and usage
 
 - snappy-compress
 
 CLI utility to compress data in the snappy format.
-It takes in either a source file or content from stdin e.g
+It takes in either a source file or directory of source files e.g
 
 ```shell
-$ go get github.com/odeke-em/snappy-cli/cmd/snappy-compress
-$ cat content | snappy-compress > output.compressed
-$ snappy-compress ~/Downloads/fileUp > output.compressed
+$ go get github.com/Seventy-Two/snappy-cli/cmd/snappy-compress
+$ snappy-compress filename
+$ snappy-compress .
 ```
+
+Will remove source file(s) and output files will have extension `.snappy`
 
 - snappy-uncompress
 
+CLI utility to uncompress data in the snappy format.
+These files must have extension `.snappy` to avoid conflicts
+It takes in either a source compressed file or directory of compressed files e.g
+
 ```shell
-$ go get github.com/odeke-em/snappy-cli/cmd/snappy-uncompress
-$ cat content.compressed | snappy-uncompress > uncompressed
-$ snappy-uncompress content.compressed > uncompressed
+$ go get github.com/Seventy-Two/snappy-cli/cmd/snappy-uncompress
+$ snappy-uncompress filename.snappy
+$ snappy-uncompress .
 ```
+
+Will remove source file(s) and output files will have identical names without `.snappy` extension
